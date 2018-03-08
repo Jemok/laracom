@@ -18,17 +18,12 @@ use Illuminate\Http\UploadedFile;
 $factory->define(Category::class, function (Faker\Generator $faker) {
     $name = $faker->unique()->randomElement([
         'Newest',
-        'Featured',
-        'Gear',
+        'Recommendations',
         'Clothing',
         'Shoes',
-        'Diapering',
-        'Feeding',
-        'Bath',
-        'Toys',
-        'Nursery',
-        'Household',
-        'Grocery'
+        'Jewelry',
+        'Men',
+        'Women'
     ]);
 
     $file = UploadedFile::fake()->image('category.png', 600, 600);

@@ -15,15 +15,14 @@
         </section>
     @endif
     <hr>
-    @if(!is_null($features))
-        <div class="container">
-            <div class="section-title b100">
-                <h2>Featured Products</h2>
-            </div>
-            @include('front.products.product-list', ['products' => $features])
-            <div id="browse-all-btn"> <a class="btn btn-default browse-all-btn" href="{{ route('front.category.slug', $category3->slug) }}" role="button">browse all items</a></div>
-        </div>
-    @endif
-    <hr />
-    @include('mailchimp::mailchimp')
+    {{--@if(!is_null($features))--}}
+        {{--<div class="container">--}}
+            {{--<div class="section-title b100">--}}
+                {{--<h2>Recommendations</h2>--}}
+            {{--</div>--}}
+            {{--@include('front.products.product-list', ['products' => $features])--}}
+            {{--<div id="browse-all-btn"> <a class="btn btn-default browse-all-btn" href="{{ route('front.category.slug', $category3->slug) }}" role="button">browse all items</a></div>--}}
+        {{--</div>--}}
+    {{--@endif--}}
+    {{--<hr />--}}
 @endsection

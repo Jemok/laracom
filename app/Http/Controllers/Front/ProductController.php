@@ -7,6 +7,11 @@ use App\Shop\Products\Repositories\Interfaces\ProductRepositoryInterface;
 use App\Http\Controllers\Controller;
 use App\Shop\Products\Transformations\ProductTransformable;
 
+use Illuminate\Support\Facades\Auth;
+use Recombee\RecommApi\Client;
+use Recombee\RecommApi\Requests as Reqs;
+use Recombee\RecommApi\Exceptions as Ex;
+
 class ProductController extends Controller
 {
     use ProductTransformable;
@@ -15,6 +20,9 @@ class ProductController extends Controller
      * @var ProductRepositoryInterface
      */
     private $productRepo;
+
+    protected $client;
+
 
     /**
      * ProductController constructor.
@@ -51,7 +59,19 @@ class ProductController extends Controller
     {
         $product = $this->productRepo->findProductBySlug(['slug' => $slug]);
 
+        $this->client = new Client('laracom', 'KoZox0Mq535SdL1qUwOQD9zjIdFnYjjtlSmx54EmGM5XZm1owuLIIOUM24L00OpD');
+
+        // Get 5 recommendations for user 'user-25'
+        $recommended = $this->client->send(new Reqs\RecommendItemsToUser('user-'.Auth::user()->id, 5));
+
+//        echo 'Recommended items: ' . json_encode($recommended, JSON_PRETTY_PRINT) . "\n";
+
+//        $data = json_encode($recommended, true);
+
+        $product_ids = $recommended['recomms'];
+
         return view('front.products.product', [
+            'product_ids' => $product_ids,
             'product' => $product,
             'images' => $product->images()->get()
         ]);

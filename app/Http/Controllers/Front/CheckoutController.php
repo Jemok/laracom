@@ -29,6 +29,10 @@ use PayPal\Api\Payment;
 use PayPal\Exception\PayPalConnectionException;
 use Ramsey\Uuid\Uuid;
 
+use Recombee\RecommApi\Client;
+use Recombee\RecommApi\Requests as Reqs;
+use Recombee\RecommApi\Exceptions as Ex;
+
 class CheckoutController extends Controller
 {
     use ProductTransformable;
@@ -43,6 +47,8 @@ class CheckoutController extends Controller
     private $paypal;
     private $cartProducts;
     private $courierId;
+
+    protected $client;
 
     public function __construct(
         CartRepositoryInterface $cartRepository,
@@ -70,13 +76,25 @@ class CheckoutController extends Controller
 
         );
 
-        $products = $this->cartRepo->getCartItems()->map(function (CartItem $item) {
-            $productRepo = new ProductRepository(new Product());
-            $product = $productRepo->findProductById($item->id);
-            return $this->transformProduct($product);
-        });
+//        $products = $this->cartRepo->getCartItems()->map(function (CartItem $item) {
+//            $productRepo = new ProductRepository(new Product());
+//            $product = $productRepo->findProductById($item->id);
+//            return $this->transformProduct($product);
+//        });
+//
+//        dd($products);
+//
+//        $products = $this->cartRepo->getCartItems()->map(function (CartItem $item) {
+//            $productRepo = new ProductRepository(new Product());
+//            $product = $productRepo->findProductById($item->id);
+//            $item->product = $this->transformProduct($product);
+//            $item->cover = $product->cover;
+//            return $item;
+//        });
+//
+//        dd($products);
 
-        $this->cartProducts = $products;
+//        $this->cartProducts = $products;
     }
 
     /**
@@ -86,6 +104,15 @@ class CheckoutController extends Controller
      */
     public function index()
     {
+
+        $products = $this->cartRepo->getCartItems()->map(function (CartItem $item) {
+            $productRepo = new ProductRepository(new Product());
+            $product = $productRepo->findProductById($item->id);
+            $item->product = $this->transformProduct($product);
+            $item->cover = $product->cover;
+            return $item;
+        });
+
         $customer = $this->customerRepo->findCustomerById($this->loggedUser()->id);
 
         $this->courierId = request()->session()->get('courierId', 1);
@@ -99,7 +126,7 @@ class CheckoutController extends Controller
         return view('front.checkout', [
             'customer' => $customer,
             'addresses' => $customer->addresses()->get(),
-            'products' => $this->cartProducts,
+            'products' => $products,
             'subtotal' => $this->cartRepo->getSubTotal(),
             'shipping' => $shippingCost,
             'tax' => $this->cartRepo->getTax(),
@@ -122,36 +149,34 @@ class CheckoutController extends Controller
      */
     public function store(CartCheckoutRequest $request)
     {
-        $method = $this->paymentRepo->findPaymentMethodById($request->input('payment'));
-        $courier = $this->courierRepo->findCourierById(request()->session()->get('courierId', 1));
 
-        if ($method->slug == 'paypal') {
-            $this->paypal->setPayer();
-            $this->paypal->setItems($this->getCartItems($this->cartRepo->getCartItems()));
-            $this->paypal->setOtherFees(
-                $this->cartRepo->getSubTotal(),
-                $this->cartRepo->getTax(),
-                $this->cartRepo->getShippingFee($courier)
+        $products = $this->cartRepo->getCartItems()->map(function (CartItem $item) {
+            $productRepo = new ProductRepository(new Product());
+            $product = $productRepo->findProductById($item->id);
+            $item->product = $this->transformProduct($product);
+            $item->cover = $product->cover;
+            return $item;
+        });
+
+        $purchase_requests = array();
+
+        foreach ($products as $product){
+
+            $request_r = new Reqs\AddPurchase("user-".Auth::user()->id, "{$product->product->slug}",
+                ['cascadeCreate' => true] // Use cascadeCreate to create the
+            // yet non-existing users and items
             );
-            $this->paypal->setAmount($this->cartRepo->getTotal(2, $this->cartRepo->getShippingFee($courier)));
-            $this->paypal->setTransactions();
 
-            try {
-                $response = $this->paypal->createPayment(
-                    route('checkout.execute', $request->except('_token')),
-                    route('checkout.cancel')
-                );
-
-                if ($response) {
-                    $redirectUrl = $response->links[1]->href;
-                    return redirect()->to($redirectUrl);
-                }
-            } catch (PayPalConnectionException $e) {
-                throw new PaypalRequestError($e->getMessage());
-            }
-        } else {
-            throw new PaymentMethodNotFoundException('Payment method unknown');
+            array_push($purchase_requests, $request_r);
         }
+
+        $this->client = new Client('laracom', 'KoZox0Mq535SdL1qUwOQD9zjIdFnYjjtlSmx54EmGM5XZm1owuLIIOUM24L00OpD');
+
+        $res = $this->client->send(new Reqs\Batch($purchase_requests));
+
+        $request->session()->flash('message', 'You checked out successfully');
+
+        return redirect()->back();
     }
 
     public function getCartItems(Collection $collection)

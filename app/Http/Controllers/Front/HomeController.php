@@ -29,8 +29,8 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $category2 = $this->categoryRepo->findCategoryById(2);
-        $category3 = $this->categoryRepo->findCategoryById(3);
+        $category2 = $this->categoryRepo->findCategoryById(1);
+        $category3 = $this->categoryRepo->findCategoryById(1);
 
         $newests = $category2->products;
         $features = $category3->products;

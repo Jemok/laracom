@@ -75,6 +75,7 @@ Route::namespace('Front')->group(function () {
     Route::resource('customer', 'CustomerController');
     Route::resource('customer.address', 'CustomerAddressController');
     Route::get('checkout', 'CheckoutController@index')->name('checkout.index');
+    Route::get('database', 'DBController@createRecommendationDb')->name('recommend');
     Route::post('checkout', 'CheckoutController@store')->name('checkout.store');
     Route::post('set-courier', 'CheckoutController@setCourier')->name('set.courier');
     Route::post('set-address', 'CheckoutController@setAddress')->name('set.address');
@@ -84,4 +85,7 @@ Route::namespace('Front')->group(function () {
     Route::get("category/{slug}", 'CategoryController@getCategory')->name('front.category.slug');
     Route::get("search", 'ProductController@search')->name('search.product');
     Route::get("{product}", 'ProductController@getProduct')->name('front.get.product');
+
 });
+
+

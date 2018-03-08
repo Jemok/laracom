@@ -60,6 +60,8 @@ class CartController extends Controller
             return $item;
         });
 
+//        dd($cartProducts);
+
         $courier = $this->courierRepo->findCourierById(request()->session()->get('courierId', 1));
         $shippingFee = $this->cartRepo->getShippingFee($courier);
 

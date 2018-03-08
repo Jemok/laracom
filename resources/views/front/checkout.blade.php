@@ -16,97 +16,97 @@
                         <div class="box-body">
                             @include('layouts.errors-and-messages')
                         </div>
-                        @if(count($addresses) > 0)
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <h3><i class="fa fa-map-marker text-success"></i> Choose delivery address</h3>
-                                    <table class="table table-striped">
-                                        <thead>
-                                            <th class="col-md-4">Alias</th>
-                                            <th class="col-md-4">Address</th>
-                                            <th class="col-md-4">Choose Address</th>
-                                        </thead>
-                                        <tbody>
-                                        @foreach($addresses as $address)
-                                            <tr>
-                                                <td>{{ $address->alias }}</td>
-                                                <td>
-                                                    {{ $address->address_1 }} {{ $address->address_2 }} <br />
-                                                    {{ $address->city->name }} {{ $address->province->name }} <br />
-                                                    {{ $address->country->name }} {{ $address->zip }}
-                                                </td>
-                                                <td>
-                                                    <label class="col-md-2 col-md-offset-3">
-                                                        <input type="radio" class="form-control" name="address" @if($selectedAddress == $address->id) checked="checked"  @endif value="{{ $address->id }}">
-                                                    </label>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <h3> <i class="fa fa-truck text-success"></i> Choose courier</h3>
-                                    @if(!$couriers->isEmpty())
-                                        <table class="table">
-                                        <thead>
-                                            <th class="col-md-4">Name</th>
-                                            <th class="col-md-4">Cost</th>
-                                            <th class="col-md-4">Choose courier</th>
-                                        </thead>
-                                        <tbody>
-                                            @foreach($couriers as $courier)
-                                            <tr>
-                                                <td>{{ $courier->name }}</td>
-                                                <td>{{config('cart.currency')}} {{ $courier->cost }}</td>
-                                                <td>
-                                                    <label class="col-md-2 col-md-offset-3">
-                                                        <input type="radio" class="form-control" name="courier" value="{{ $courier->id }}" @if($selectedCourier == $courier->id) checked="checked"  @endif>
-                                                    </label>
-                                                </td>
-                                            </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                    @else
-                                        <p class="alert alert-danger">No courier set</p>
-                                    @endif
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <h3> <i class="fa fa-money text-success"></i> Choose payment method</h3>
-                                    @if($payments)
-                                        <table class="table">
-                                            <thead>
-                                            <th class="col-md-4">Name</th>
-                                            <th class="col-md-4">Description</th>
-                                            <th class="col-md-4">Choose payment</th>
-                                            </thead>
-                                            <tbody>
-                                            @foreach($payments as $payment)
-                                                <tr>
-                                                    <td>{{ $payment->name }}</td>
-                                                    <td>{{ $payment->description }}</td>
-                                                    <td>
-                                                        <label class="col-md-2 col-md-offset-3">
-                                                            <input type="radio" class="form-control" name="payment" value="{{ $payment->id }}" @if($selectedPayment == $payment->id) checked="checked"  @endif>
-                                                        </label>
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                            </tbody>
-                                        </table>
-                                    @else
-                                        <p class="alert alert-danger">No payment method set</p>
-                                    @endif
-                                </div>
-                            </div>
-                        @else
-                            <p class="alert alert-danger"><a href="{{ route('customer.address.create', [$customer->id]) }}">No address found. You need to create an address first here.</a></p>
-                        @endif
+                        {{--@if(count($addresses) > 0)--}}
+                            {{--<div class="row">--}}
+                                {{--<div class="col-md-12">--}}
+                                    {{--<h3><i class="fa fa-map-marker text-success"></i> Choose delivery address</h3>--}}
+                                    {{--<table class="table table-striped">--}}
+                                        {{--<thead>--}}
+                                            {{--<th class="col-md-4">Alias</th>--}}
+                                            {{--<th class="col-md-4">Address</th>--}}
+                                            {{--<th class="col-md-4">Choose Address</th>--}}
+                                        {{--</thead>--}}
+                                        {{--<tbody>--}}
+                                        {{--@foreach($addresses as $address)--}}
+                                            {{--<tr>--}}
+                                                {{--<td>{{ $address->alias }}</td>--}}
+                                                {{--<td>--}}
+                                                    {{--{{ $address->address_1 }} {{ $address->address_2 }} <br />--}}
+                                                    {{--{{ $address->city->name }} {{ $address->province->name }} <br />--}}
+                                                    {{--{{ $address->country->name }} {{ $address->zip }}--}}
+                                                {{--</td>--}}
+                                                {{--<td>--}}
+                                                    {{--<label class="col-md-2 col-md-offset-3">--}}
+                                                        {{--<input type="radio" class="form-control" name="address" @if($selectedAddress == $address->id) checked="checked"  @endif value="{{ $address->id }}">--}}
+                                                    {{--</label>--}}
+                                                {{--</td>--}}
+                                            {{--</tr>--}}
+                                        {{--@endforeach--}}
+                                        {{--</tbody>--}}
+                                    {{--</table>--}}
+                                {{--</div>--}}
+                            {{--</div>--}}
+                            {{--<div class="row">--}}
+                                {{--<div class="col-md-12">--}}
+                                    {{--<h3> <i class="fa fa-truck text-success"></i> Choose courier</h3>--}}
+                                    {{--@if(!$couriers->isEmpty())--}}
+                                        {{--<table class="table">--}}
+                                        {{--<thead>--}}
+                                            {{--<th class="col-md-4">Name</th>--}}
+                                            {{--<th class="col-md-4">Cost</th>--}}
+                                            {{--<th class="col-md-4">Choose courier</th>--}}
+                                        {{--</thead>--}}
+                                        {{--<tbody>--}}
+                                            {{--@foreach($couriers as $courier)--}}
+                                            {{--<tr>--}}
+                                                {{--<td>{{ $courier->name }}</td>--}}
+                                                {{--<td>{{config('cart.currency')}} {{ $courier->cost }}</td>--}}
+                                                {{--<td>--}}
+                                                    {{--<label class="col-md-2 col-md-offset-3">--}}
+                                                        {{--<input type="radio" class="form-control" name="courier" value="{{ $courier->id }}" @if($selectedCourier == $courier->id) checked="checked"  @endif>--}}
+                                                    {{--</label>--}}
+                                                {{--</td>--}}
+                                            {{--</tr>--}}
+                                            {{--@endforeach--}}
+                                        {{--</tbody>--}}
+                                    {{--</table>--}}
+                                    {{--@else--}}
+                                        {{--<p class="alert alert-danger">No courier set</p>--}}
+                                    {{--@endif--}}
+                                {{--</div>--}}
+                            {{--</div>--}}
+                            {{--<div class="row">--}}
+                                {{--<div class="col-md-12">--}}
+                                    {{--<h3> <i class="fa fa-money text-success"></i> Choose payment method</h3>--}}
+                                    {{--@if($payments)--}}
+                                        {{--<table class="table">--}}
+                                            {{--<thead>--}}
+                                            {{--<th class="col-md-4">Name</th>--}}
+                                            {{--<th class="col-md-4">Description</th>--}}
+                                            {{--<th class="col-md-4">Choose payment</th>--}}
+                                            {{--</thead>--}}
+                                            {{--<tbody>--}}
+                                            {{--@foreach($payments as $payment)--}}
+                                                {{--<tr>--}}
+                                                    {{--<td>{{ $payment->name }}</td>--}}
+                                                    {{--<td>{{ $payment->description }}</td>--}}
+                                                    {{--<td>--}}
+                                                        {{--<label class="col-md-2 col-md-offset-3">--}}
+                                                            {{--<input type="radio" class="form-control" name="payment" value="{{ $payment->id }}" @if($selectedPayment == $payment->id) checked="checked"  @endif>--}}
+                                                        {{--</label>--}}
+                                                    {{--</td>--}}
+                                                {{--</tr>--}}
+                                            {{--@endforeach--}}
+                                            {{--</tbody>--}}
+                                        {{--</table>--}}
+                                    {{--@else--}}
+                                        {{--<p class="alert alert-danger">No payment method set</p>--}}
+                                    {{--@endif--}}
+                                {{--</div>--}}
+                            {{--</div>--}}
+                        {{--@else--}}
+                            {{--<p class="alert alert-danger"><a href="{{ route('customer.address.create', [$customer->id]) }}">No address found. You need to create an address first here.</a></p>--}}
+                        {{--@endif--}}
                         <hr>
                         <h3><i class="fa fa-cart-plus text-success"></i> Your Total</h3>
                         <table class="table table-striped">
@@ -143,7 +143,7 @@
                         </table>
                     </div>
                 </div>
-                @if(count($addresses) > 0)
+                {{--@if(count($addresses) > 0)--}}
                 <div class="row">
                     <div class="col-md-12">
                         <hr>
@@ -155,7 +155,7 @@
                         </div>
                     </div>
                 </div>
-                @endif
+                {{--@endif--}}
             </form>
         @else
             <div class="row">

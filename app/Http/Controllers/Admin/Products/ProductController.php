@@ -16,6 +16,10 @@ use DateTimeZone;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
+use Recombee\RecommApi\Client;
+use Recombee\RecommApi\Requests as Reqs;
+use Recombee\RecommApi\Exceptions as Ex;
+
 
 class ProductController extends Controller
 {
@@ -31,6 +35,12 @@ class ProductController extends Controller
     private $categoryRepo;
 
     /**
+     * @var Client
+     */
+    protected $client;
+
+
+    /**
      * ProductController constructor.
      * @param ProductRepositoryInterface $productRepository
      * @param CategoryRepositoryInterface $categoryRepository
@@ -41,7 +51,10 @@ class ProductController extends Controller
     ) {
         $this->productRepo = $productRepository;
         $this->categoryRepo = $categoryRepository;
+
+        $this->client = new Client('laracom', 'KoZox0Mq535SdL1qUwOQD9zjIdFnYjjtlSmx54EmGM5XZm1owuLIIOUM24L00OpD');
     }
+
 
     /**
      * Display a listing of the resource.
@@ -83,6 +96,28 @@ class ProductController extends Controller
      */
     public function store(CreateProductRequest $request)
     {
+        $requests = array();
+
+        $r = new Reqs\SetItemValues(
+            str_slug($request->name), //itemId
+            //values:
+            [
+                'price' => $request->price,
+                'slug'  => str_slug($request->name),
+                'name' => $request->name,
+                'description' => $request->description,
+                'quantity' => $request->quantity
+            ],
+            //optional parameters:
+            ['cascadeCreate' => true] // Use cascadeCreate for creating item
+        // with given itemId, if it doesn't exist]
+        );
+
+        array_push($requests, $r);
+
+        // Send catalog to the recommender system
+        $result =  $this->client->send(new Reqs\Batch($requests));
+
         $data = $request->except('_token', '_method');
         $data['slug'] = str_slug($request->input('name'));
 
