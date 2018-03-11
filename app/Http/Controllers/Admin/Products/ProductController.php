@@ -11,11 +11,13 @@ use App\Shop\Products\Requests\UpdateProductRequest;
 use App\Http\Controllers\Controller;
 use App\Shop\Products\Transformations\ProductTransformable;
 use App\Shop\Tools\UploadableTrait;
+use Carbon\Carbon;
 use DateTime;
 use DateTimeZone;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Recombee\RecommApi\Client;
 use Recombee\RecommApi\Requests as Reqs;
 use Recombee\RecommApi\Exceptions as Ex;
@@ -85,7 +87,9 @@ class ProductController extends Controller
      */
     public function create()
     {
-        return view('admin.products.create');
+        $categories = Category::get();
+
+        return view('admin.products.create', compact('categories'));
     }
 
     /**
@@ -105,6 +109,7 @@ class ProductController extends Controller
                 'price' => $request->price,
                 'slug'  => str_slug($request->name),
                 'name' => $request->name,
+                'category' => $request->category,
                 'description' => $request->description,
                 'quantity' => $request->quantity
             ],

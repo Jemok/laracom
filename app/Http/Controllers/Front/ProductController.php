@@ -7,6 +7,7 @@ use App\Shop\Products\Repositories\Interfaces\ProductRepositoryInterface;
 use App\Http\Controllers\Controller;
 use App\Shop\Products\Transformations\ProductTransformable;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Recombee\RecommApi\Client;
 use Recombee\RecommApi\Requests as Reqs;
@@ -61,17 +62,29 @@ class ProductController extends Controller
 
         $this->client = new Client('laracom', 'KoZox0Mq535SdL1qUwOQD9zjIdFnYjjtlSmx54EmGM5XZm1owuLIIOUM24L00OpD');
 
-        // Get 5 recommendations for user 'user-25'
-        $recommended = $this->client->send(new Reqs\RecommendItemsToUser('user-'.Auth::user()->id, 5));
+        $this->client->send(new Reqs\AddDetailView("user-".Auth::user()->id, $product->slug,  ['timestamp' => Carbon::now()->toDateTimeString(), 'cascadeCreate' => true]));
+
+        // Items you may like
+        $recommended_me = $this->client->send(new Reqs\RecommendItemsToUser('user-'.Auth::user()->id, 5));
+
+        $recommended_me_ids = $recommended_me['recomms'];
+
+        //Related Items
+        $recommended = $this->client->send(new Reqs\RecommendItemsToItem($product->slug, "user-".Auth::user()->id, 5));
 
 //        echo 'Recommended items: ' . json_encode($recommended, JSON_PRETTY_PRINT) . "\n";
 
 //        $data = json_encode($recommended, true);
-
         $product_ids = $recommended['recomms'];
+
+        $recommended_others = $this->client->send(new Reqs\RecommendUsersToUser("user-".Auth::user()->id, 5, []));
+
+        $recommended_other_ids = $recommended_others['recomms'];
 
         return view('front.products.product', [
             'product_ids' => $product_ids,
+            'recommended_me_ids' => $recommended_me_ids,
+            'recommended_other_ids' => $recommended_other_ids,
             'product' => $product,
             'images' => $product->images()->get()
         ]);

@@ -16,6 +16,17 @@
                         <label for="name">Name <span class="text-danger">*</span></label>
                         <input type="text" name="name" id="name" placeholder="Name" class="form-control" value="{{ old('name') }}">
                     </div>
+                    
+                    {{--<div class="form-group">--}}
+                        {{--<label for="category">Category <span class="text-danger">*</span></label>--}}
+
+                        {{--<select name="category" id="category" class="form-control">--}}
+                            {{--@foreach($categories as $category)--}}
+                                {{--<option value="{{ $category->slug }}">{{ $category->name }}</option>--}}
+                            {{--@endforeach    --}}
+                        {{--</select>--}}
+                    {{--</div>--}}
+                    {{----}}
                     <div class="form-group">
                         <label for="description">Description </label>
                         <textarea class="form-control ckeditor" name="description" id="description" rows="5" placeholder="Description">{{ old('description') }}</textarea>

@@ -162,7 +162,7 @@ class CheckoutController extends Controller
 
         foreach ($products as $product){
 
-            $request_r = new Reqs\AddPurchase("user-".Auth::user()->id, "{$product->product->slug}",
+            $request_r = new Reqs\AddPurchase("user-".Auth::user()->id, $product->product->slug,
                 ['cascadeCreate' => true] // Use cascadeCreate to create the
             // yet non-existing users and items
             );

@@ -26,6 +26,7 @@ class DBController extends Controller
         // Add properties of items
         $this->client->send(new Reqs\AddItemProperty('name', 'string'));
         $this->client->send(new Reqs\AddItemProperty('slug', 'string'));
+//        $this->client->send(new Reqs\AddItemProperty('category', 'string'));
         $this->client->send(new Reqs\AddItemProperty('price', 'double'));
         $this->client->send(new Reqs\AddItemProperty('quantity', 'int'));
         $this->client->send(new Reqs\AddItemProperty('description', 'string'));
